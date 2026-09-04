@@ -57,7 +57,7 @@ See `examples/` for more: `MultipleInverters` (two trackers at once), `CustomSer
 
 ## Timeouts
 
-Every `AxpertDevice` has one default timeout, set in the constructor (`AXPERT_DEFAULT_TIMEOUT_MS` = 500 ms if you don't pass one) and changeable later:
+Every `AxpertDevice` has one default timeout, set in the constructor (`AXPERT_DEFAULT_TIMEOUT_MS` = 1000 ms if you don't pass one) and changeable later:
 
 ```cpp
 AxpertDevice inverter(Serial1, 800);   // this device's default is now 800 ms
