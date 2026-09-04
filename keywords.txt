@@ -72,6 +72,7 @@ AxpertMachineType	KEYWORD1
 AxpertTopology	KEYWORD1
 AxpertPvOkConditionForParallel	KEYWORD1
 AxpertPvPowerBalance	KEYWORD1
+AxpertFlagState	KEYWORD1
 AxpertChargingSourceStatus	KEYWORD1
 AxpertParallelBatteryStatus	KEYWORD1
 AxpertFaultCode	KEYWORD1
@@ -118,6 +119,14 @@ queryOutputLoadEnergyOfDay	KEYWORD2
 startAteTest	KEYWORD2
 endAteTest	KEYWORD2
 setFlags	KEYWORD2
+setSilenceBuzzerEnabled	KEYWORD2
+setOverloadBypassEnabled	KEYWORD2
+setLcdEscapeToDefaultEnabled	KEYWORD2
+setOverloadRestartEnabled	KEYWORD2
+setOverTemperatureRestartEnabled	KEYWORD2
+setBacklightOnEnabled	KEYWORD2
+setAlarmOnPrimarySourceInterruptEnabled	KEYWORD2
+setFaultCodeRecordEnabled	KEYWORD2
 resetToDefaults	KEYWORD2
 setMaxChargingCurrent	KEYWORD2
 setMaxUtilityChargingCurrent	KEYWORD2
@@ -152,6 +161,9 @@ setBmsMessage	KEYWORD2
 
 parse	KEYWORD2
 build	KEYWORD2
+buildEnableCommand	KEYWORD2
+buildDisableCommand	KEYWORD2
+hasAnyWarning	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

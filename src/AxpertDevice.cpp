@@ -349,7 +349,79 @@ bool AxpertDevice::endAteTest(int32_t timeoutMs) {
 }
 
 bool AxpertDevice::setFlags(const SetFlagsRequest& request, int32_t timeoutMs) {
-    return transactSet(request, timeoutMs);
+    // Unlike every other setting command, PE/PD is really up to two
+    // physical transactions - one enable list, one disable list - since
+    // the wire protocol has no single command that moves some flags one
+    // way and others the other way. Only report success if at least one
+    // of the two was actually needed (every flag Unchanged is a no-op,
+    // not a success) and everything that was sent got ACKed.
+    bool anySent = false;
+    bool allOk = true;
+    char payload[AXPERT_MAX_FRAME_LEN];
+
+    size_t len = request.buildEnableCommand(payload, sizeof(payload));
+    if (len > 0) {
+        anySent = true;
+        AckResponse ack;
+        allOk = allOk && transact(payload, len, ack, timeoutMs) && ack.ok;
+    }
+
+    len = request.buildDisableCommand(payload, sizeof(payload));
+    if (len > 0) {
+        anySent = true;
+        AckResponse ack;
+        allOk = allOk && transact(payload, len, ack, timeoutMs) && ack.ok;
+    }
+
+    return anySent && allOk;
+}
+
+bool AxpertDevice::setSilenceBuzzerEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.silenceBuzzer = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setOverloadBypassEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.overloadBypass = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setLcdEscapeToDefaultEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.lcdEscapeToDefault = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setOverloadRestartEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.overloadRestart = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setOverTemperatureRestartEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.overTemperatureRestart = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setBacklightOnEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.backlightOn = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setAlarmOnPrimarySourceInterruptEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.alarmOnPrimarySourceInterrupt = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
+}
+
+bool AxpertDevice::setFaultCodeRecordEnabled(bool enabled, int32_t timeoutMs) {
+    SetFlagsRequest request{};
+    request.faultCodeRecord = enabled ? AxpertFlagState::Enabled : AxpertFlagState::Disabled;
+    return setFlags(request, timeoutMs);
 }
 
 bool AxpertDevice::resetToDefaults(int32_t timeoutMs) {

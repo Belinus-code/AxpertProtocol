@@ -48,5 +48,25 @@ struct WarningStatusResponse {
     uint8_t reserved34;             // a34
     uint8_t reserved35;             // a35
 
+    // True if any of the 36 bits above is set. Deliberately doesn't try to
+    // distinguish "fault" from "warning" severity: the protocol's own
+    // Fault/Warning classification is inconsistent or missing for several
+    // bits after the redlining described in AxpertWarningBit's comments
+    // (AxpertTypes.h) - check the individual fields yourself if you need
+    // that distinction.
+    bool hasAnyWarning() const {
+        return pvLoss || inverterFault || busOver || busUnder || busSoftFail ||
+               lineFail || outputShort || inverterVoltageTooLow ||
+               inverterVoltageTooHigh || overTemperature || fanLocked ||
+               batteryVoltageHigh || batteryLowAlarm || reserved13 ||
+               batteryUnderShutdown || batteryDerating || overLoad ||
+               eepromFault || inverterOverCurrent || inverterSoftFail ||
+               selfTestFail || outputDcVoltageOver || batteryOpen ||
+               currentSensorFail || reserved24 || reserved25 || pvVoltageHigh ||
+               pvOverCurrent || reserved28 || reserved29 || dcDcOverCurrent ||
+               reserved31 || mksiiiFaultCodeBit0 || mksiiiFaultCodeBit1 ||
+               reserved34 || reserved35;
+    }
+
     static bool parse(const uint8_t* raw, size_t len, WarningStatusResponse& out);
 };

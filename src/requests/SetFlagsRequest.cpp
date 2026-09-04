@@ -7,19 +7,32 @@
 
 using namespace AxpertBuilding;
 
-size_t SetFlagsRequest::build(char* buf, size_t bufCapacity) const {
+namespace {
+
+size_t buildForState(const SetFlagsRequest& request, AxpertFlagState wanted, const char* command,
+                      char* buf, size_t bufCapacity) {
     size_t offset = 0;
-    if (!appendText(buf, bufCapacity, &offset, enable ? "PE" : "PD")) return 0;
+    if (!appendText(buf, bufCapacity, &offset, command)) return 0;
 
     size_t before = offset;
-    if (silenceBuzzer && !appendText(buf, bufCapacity, &offset, "a")) return 0;
-    if (overloadBypass && !appendText(buf, bufCapacity, &offset, "b")) return 0;
-    if (lcdEscapeToDefault && !appendText(buf, bufCapacity, &offset, "k")) return 0;
-    if (overloadRestart && !appendText(buf, bufCapacity, &offset, "u")) return 0;
-    if (overTemperatureRestart && !appendText(buf, bufCapacity, &offset, "v")) return 0;
-    if (backlightOn && !appendText(buf, bufCapacity, &offset, "x")) return 0;
-    if (alarmOnPrimarySourceInterrupt && !appendText(buf, bufCapacity, &offset, "y")) return 0;
-    if (faultCodeRecord && !appendText(buf, bufCapacity, &offset, "z")) return 0;
+    if (request.silenceBuzzer == wanted && !appendText(buf, bufCapacity, &offset, "a")) return 0;
+    if (request.overloadBypass == wanted && !appendText(buf, bufCapacity, &offset, "b")) return 0;
+    if (request.lcdEscapeToDefault == wanted && !appendText(buf, bufCapacity, &offset, "k")) return 0;
+    if (request.overloadRestart == wanted && !appendText(buf, bufCapacity, &offset, "u")) return 0;
+    if (request.overTemperatureRestart == wanted && !appendText(buf, bufCapacity, &offset, "v")) return 0;
+    if (request.backlightOn == wanted && !appendText(buf, bufCapacity, &offset, "x")) return 0;
+    if (request.alarmOnPrimarySourceInterrupt == wanted && !appendText(buf, bufCapacity, &offset, "y")) return 0;
+    if (request.faultCodeRecord == wanted && !appendText(buf, bufCapacity, &offset, "z")) return 0;
 
-    return offset > before ? offset : 0; // require at least one flag
+    return offset > before ? offset : 0; // require at least one flag in this state
+}
+
+} // namespace
+
+size_t SetFlagsRequest::buildEnableCommand(char* buf, size_t bufCapacity) const {
+    return buildForState(*this, AxpertFlagState::Enabled, "PE", buf, bufCapacity);
+}
+
+size_t SetFlagsRequest::buildDisableCommand(char* buf, size_t bufCapacity) const {
+    return buildForState(*this, AxpertFlagState::Disabled, "PD", buf, bufCapacity);
 }

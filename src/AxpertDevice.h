@@ -195,7 +195,26 @@ public:
     // static and gets called internally.
     bool startAteTest(int32_t timeoutMs = -1);                                        // 3.1 ATE1
     bool endAteTest(int32_t timeoutMs = -1);                                          // 3.2 ATE0
-    bool setFlags(const SetFlagsRequest& request, int32_t timeoutMs = -1);            // 3.3 PE/PD
+
+    // 3.3 PE/PD. Every one of SetFlagsRequest's 8 fields can independently
+    // be Enabled/Disabled/left Unchanged - see that struct's comment. Note
+    // this is the one setter that doesn't necessarily map to a single
+    // physical transaction: it sends a PE command, a PD command, both, or
+    // (if every flag is Unchanged) neither, per what the request actually
+    // asks for.
+    bool setFlags(const SetFlagsRequest& request, int32_t timeoutMs = -1);
+
+    // Convenience wrappers around setFlags() for changing exactly one flag
+    // without touching the other seven.
+    bool setSilenceBuzzerEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setOverloadBypassEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setLcdEscapeToDefaultEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setOverloadRestartEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setOverTemperatureRestartEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setBacklightOnEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setAlarmOnPrimarySourceInterruptEnabled(bool enabled, int32_t timeoutMs = -1);
+    bool setFaultCodeRecordEnabled(bool enabled, int32_t timeoutMs = -1);
+
     bool resetToDefaults(int32_t timeoutMs = -1);                                     // 3.4 PF
     bool setMaxChargingCurrent(const SetMaxChargingCurrentRequest& request, int32_t timeoutMs = -1);               // 3.5 MNCHGC
     bool setMaxUtilityChargingCurrent(const SetMaxUtilityChargingCurrentRequest& request, int32_t timeoutMs = -1); // 3.6 MUCHGC

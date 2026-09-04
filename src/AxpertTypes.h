@@ -86,6 +86,16 @@ enum class AxpertPvPowerBalance : uint8_t {
     MaxPowerIsChargedPlusLoadPower = 1
 };
 
+// 3.3 (PE/PD): per-flag target state for SetFlagsRequest. `Unchanged` is
+// deliberately 0 so that value-initializing a SetFlagsRequest (`{}`)
+// leaves every flag alone by default - set just the fields you want to
+// change to Enabled/Disabled.
+enum class AxpertFlagState : int8_t {
+    Disabled = -1,
+    Unchanged = 0,
+    Enabled = 1
+};
+
 // Protocol 2.10 (QPIGS bits b2b1b0) / 2.23 (QPGSn charging-related bits):
 // combined charging source status. Only the 4 documented bit patterns are
 // valid - values are the literal 3-bit patterns, not sequential.

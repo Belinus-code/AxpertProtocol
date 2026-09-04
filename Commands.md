@@ -20,6 +20,7 @@ Referenced by the `Type` column below; every enum lives in `src/AxpertTypes.h`.
 | `AxpertTopology` | `Transformerless`=0, `Transformer`=1 |
 | `AxpertPvOkConditionForParallel` | `AnyUnitConnected`=0, `AllUnitsConnected`=1 |
 | `AxpertPvPowerBalance` | `MaxCurrentIsMaxChargedCurrent`=0, `MaxPowerIsChargedPlusLoadPower`=1 |
+| `AxpertFlagState` | `Disabled`=-1, `Unchanged`=0, `Enabled`=1 |
 | `AxpertChargingSourceStatus` | `None`=0b000, `SccOnly`=0b110, `AcOnly`=0b101, `SccAndAc`=0b111 (only these 4 patterns are valid) |
 | `AxpertParallelBatteryStatus` | `Normal`=0, `Under`=1, `Open`=2 |
 | `AxpertFaultCode` | `None`=0, `FanLocked`=1, `OverTemperature`=2, `BatteryVoltageTooHigh`=3, `BatteryVoltageTooLow`=4, `OutputShortCircuitedOrOverTemperature`=5, `OutputVoltageTooHigh`=6, `OverLoadTimeOut`=7, `BusVoltageTooHigh`=8, `BusSoftStartFailed`=9, `PvChargerCurrentOver`=10, `PvOverVolt`=11, `DcDcOverCurrent`=12, `OverCurrentInverter`=51, `InverterSoftStartFailed`=53, `OverDcVoltageOnOutputOfInverter`=55, `CurrentSensorFailed`=57, `OutputVoltageTooLow`=58, `PvVoltageHigh`=59, `InverterNegativePower`=60, `ParallelVersionDifferent`=71, `OutputCircuitFailed`=72, `OutputVoltDifferent`=73, `CanCommunicationFailed`=80, `ParallelHostLineLost`=81, `ParallelSynchronizedSignalLost`=82, `ParallelBatteryVoltageDetectDifferent`=83, `ParallelLineVoltageOrFrequencyDetectDifferent`=84, `ParallelOutputSettingDifferent`=86 |
@@ -133,7 +134,7 @@ Referenced by the `Type` column below; every enum lives in `src/AxpertTypes.h`.
 
 ### 2.12 QPIWS - `WarningStatusResponse`
 
-One `uint8_t` (0 or 1) per bit, named after `AxpertWarningBit`. See that enum's comment in `AxpertTypes.h` for which bits are reserved/ambiguous in this protocol revision.
+One `uint8_t` (0 or 1) per bit, named after `AxpertWarningBit`. See that enum's comment in `AxpertTypes.h` for which bits are reserved/ambiguous in this protocol revision. `hasAnyWarning() const` (a plain `bool`-returning method, not a wire field) is true if any of the 36 bits below is set - it doesn't try to distinguish fault- from warning-severity, since the protocol itself is inconsistent about that for several bits.
 
 | Field | Type | Range / Values | Bit |
 |---|---|---|---|
@@ -317,19 +318,20 @@ No fields - `build()` is `static`. *(Protocol's section title omits `<CRC><cr>`,
 
 ### 3.3 PE / PD - `SetFlagsRequest`
 
+Symmetric with `FlagStatusResponse` (2.9) - same 8 flags, each independently `Enabled`, `Disabled`, or left at the default `Unchanged`. Unlike every other Request struct, this one has two `build*()` methods instead of one (`buildEnableCommand()` / `buildDisableCommand()`), because the wire protocol itself is two separate commands (PE and PD) - `AxpertDevice::setFlags()` sends whichever of the two actually have something to say (0, 1, or both).
+
 | Field | Type | Range / Values | Notes |
 |---|---|---|---|
-| `enable` | `bool` | true = "PE...", false = "PD..." | |
-| `silenceBuzzer` | `bool` | true/false | letter `a` |
-| `overloadBypass` | `bool` | true/false | letter `b` |
-| `lcdEscapeToDefault` | `bool` | true/false | letter `k` |
-| `overloadRestart` | `bool` | true/false | letter `u` |
-| `overTemperatureRestart` | `bool` | true/false | letter `v` |
-| `backlightOn` | `bool` | true/false | letter `x` |
-| `alarmOnPrimarySourceInterrupt` | `bool` | true/false | letter `y` |
-| `faultCodeRecord` | `bool` | true/false | letter `z` |
+| `silenceBuzzer` | `AxpertFlagState` | see [Enums](#enums) | letter `a` |
+| `overloadBypass` | `AxpertFlagState` | see [Enums](#enums) | letter `b` |
+| `lcdEscapeToDefault` | `AxpertFlagState` | see [Enums](#enums) | letter `k` |
+| `overloadRestart` | `AxpertFlagState` | see [Enums](#enums) | letter `u` |
+| `overTemperatureRestart` | `AxpertFlagState` | see [Enums](#enums) | letter `v` |
+| `backlightOn` | `AxpertFlagState` | see [Enums](#enums) | letter `x` |
+| `alarmOnPrimarySourceInterrupt` | `AxpertFlagState` | see [Enums](#enums) | letter `y` |
+| `faultCodeRecord` | `AxpertFlagState` | see [Enums](#enums) | letter `z` |
 
-Each field set to `true` is included as its letter in the outgoing string; every included flag moves in the direction chosen by `enable` (you can't enable some and disable others in one call - send two `SetFlagsRequest`s for that).
+`AxpertDevice` also has one named convenience method per flag (e.g. `setBacklightOnEnabled(bool, ...)`) for changing exactly one flag without constructing the struct yourself.
 
 ### 3.4 PF - `ResetToDefaultsRequest`
 
