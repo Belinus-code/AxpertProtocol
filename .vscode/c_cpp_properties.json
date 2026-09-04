@@ -1,0 +1,9 @@
+{
+    "configurations": [
+        {
+            "name": "Arduino-ESP32",
+            "compileCommands": "${workspaceFolder}/.vscode/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

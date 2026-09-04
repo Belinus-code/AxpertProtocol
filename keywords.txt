@@ -1,0 +1,161 @@
+#######################################
+# Syntax Coloring Map for AxpertProtocol
+#######################################
+
+#######################################
+# Classes / Structs (KEYWORD1)
+#######################################
+
+AxpertDevice	KEYWORD1
+AxpertTransport	KEYWORD1
+
+AckResponse	KEYWORD1
+ProtocolIdResponse	KEYWORD1
+SerialNumberResponse	KEYWORD1
+FirmwareVersionResponse	KEYWORD1
+RatingInfoResponse	KEYWORD1
+FlagStatusResponse	KEYWORD1
+GeneralStatusResponse	KEYWORD1
+DeviceModeResponse	KEYWORD1
+WarningStatusResponse	KEYWORD1
+DefaultSettingsResponse	KEYWORD1
+ModelNameResponse	KEYWORD1
+GeneralModelNameResponse	KEYWORD1
+ChargingCurrentOptionsResponse	KEYWORD1
+TimeResponse	KEYWORD1
+BatteryEqualizationStatusResponse	KEYWORD1
+ParallelInfoResponse	KEYWORD1
+EnergyResponse	KEYWORD1
+
+SetBmsMessageRequest	KEYWORD1
+StartAteTestRequest	KEYWORD1
+EndAteTestRequest	KEYWORD1
+ResetToDefaultsRequest	KEYWORD1
+ResetBatteryVoltageAdjustRequest	KEYWORD1
+ResetEnergyDataRequest	KEYWORD1
+EraseDataLogRequest	KEYWORD1
+SetFlagsRequest	KEYWORD1
+SetMaxChargingCurrentRequest	KEYWORD1
+SetMaxUtilityChargingCurrentRequest	KEYWORD1
+SetOutputFrequencyRequest	KEYWORD1
+SetOutputRatingVoltageRequest	KEYWORD1
+SetOutputSourcePriorityRequest	KEYWORD1
+SetOutputModeRequest	KEYWORD1
+SetBatteryVoltageBackToUtilityRequest	KEYWORD1
+SetBatteryVoltageBackToBatteryRequest	KEYWORD1
+SetChargerSourcePriorityRequest	KEYWORD1
+SetParallelChargerSourcePriorityRequest	KEYWORD1
+SetGridWorkingRangeRequest	KEYWORD1
+SetBatteryTypeRequest	KEYWORD1
+SetBatteryCutOffVoltageRequest	KEYWORD1
+SetBatteryCvChargingVoltageRequest	KEYWORD1
+SetBatteryFloatChargingVoltageRequest	KEYWORD1
+SetBatteryVoltageAdjustPointRequest	KEYWORD1
+SetPvOkConditionRequest	KEYWORD1
+SetPvPowerBalanceRequest	KEYWORD1
+SetDataLogPeriodRequest	KEYWORD1
+SetBatteryEqualizationEnabledRequest	KEYWORD1
+SetBatteryEqualizationTimeRequest	KEYWORD1
+SetBatteryEqualizationPeriodRequest	KEYWORD1
+SetBatteryEqualizationVoltageRequest	KEYWORD1
+SetBatteryEqualizationOverTimeRequest	KEYWORD1
+SetBatteryEqualizationActiveRequest	KEYWORD1
+SetMaxChargingTimeAtCvRequest	KEYWORD1
+
+AxpertDeviceMode	KEYWORD1
+AxpertOutputSourcePriority	KEYWORD1
+AxpertChargerSourcePriority	KEYWORD1
+AxpertBatteryType	KEYWORD1
+AxpertInputVoltageRange	KEYWORD1
+AxpertOutputMode	KEYWORD1
+AxpertMachineType	KEYWORD1
+AxpertTopology	KEYWORD1
+AxpertPvOkConditionForParallel	KEYWORD1
+AxpertPvPowerBalance	KEYWORD1
+AxpertChargingSourceStatus	KEYWORD1
+AxpertParallelBatteryStatus	KEYWORD1
+AxpertFaultCode	KEYWORD1
+AxpertWarningBit	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+setDefaultTimeout	KEYWORD2
+defaultTimeout	KEYWORD2
+setVerifyCrcOnReceive	KEYWORD2
+verifyCrcOnReceive	KEYWORD2
+
+queryProtocolId	KEYWORD2
+querySerialNumber	KEYWORD2
+querySerialNumberExtended	KEYWORD2
+queryMainFirmwareVersion	KEYWORD2
+querySccFirmwareVersion	KEYWORD2
+queryRemotePanelFirmwareVersion	KEYWORD2
+queryRatingInfo	KEYWORD2
+queryFlagStatus	KEYWORD2
+queryGeneralStatus	KEYWORD2
+queryDeviceMode	KEYWORD2
+queryWarningStatus	KEYWORD2
+queryDefaultSettings	KEYWORD2
+queryMaxChargingCurrentOptions	KEYWORD2
+queryMaxUtilityChargingCurrentOptions	KEYWORD2
+queryTime	KEYWORD2
+queryModelName	KEYWORD2
+queryGeneralModelName	KEYWORD2
+queryBatteryEqualizationStatus	KEYWORD2
+queryParallelInfo	KEYWORD2
+queryTotalPvGeneratedEnergy	KEYWORD2
+queryPvGeneratedEnergyOfYear	KEYWORD2
+queryPvGeneratedEnergyOfMonth	KEYWORD2
+queryPvGeneratedEnergyOfDay	KEYWORD2
+queryTotalOutputLoadEnergy	KEYWORD2
+queryOutputLoadEnergyOfYear	KEYWORD2
+queryOutputLoadEnergyOfMonth	KEYWORD2
+queryOutputLoadEnergyOfDay	KEYWORD2
+
+startAteTest	KEYWORD2
+endAteTest	KEYWORD2
+setFlags	KEYWORD2
+resetToDefaults	KEYWORD2
+setMaxChargingCurrent	KEYWORD2
+setMaxUtilityChargingCurrent	KEYWORD2
+setOutputFrequency	KEYWORD2
+setOutputRatingVoltage	KEYWORD2
+setOutputSourcePriority	KEYWORD2
+setOutputMode	KEYWORD2
+setBatteryVoltageBackToUtility	KEYWORD2
+setBatteryVoltageBackToBattery	KEYWORD2
+setChargerSourcePriority	KEYWORD2
+setParallelChargerSourcePriority	KEYWORD2
+setGridWorkingRange	KEYWORD2
+setBatteryType	KEYWORD2
+setBatteryCutOffVoltage	KEYWORD2
+setBatteryCvChargingVoltage	KEYWORD2
+setBatteryFloatChargingVoltage	KEYWORD2
+setBatteryVoltageAdjustPoint	KEYWORD2
+resetBatteryVoltageAdjust	KEYWORD2
+setPvOkCondition	KEYWORD2
+setPvPowerBalance	KEYWORD2
+resetEnergyData	KEYWORD2
+eraseDataLog	KEYWORD2
+setDataLogPeriod	KEYWORD2
+setBatteryEqualizationEnabled	KEYWORD2
+setBatteryEqualizationTime	KEYWORD2
+setBatteryEqualizationPeriod	KEYWORD2
+setBatteryEqualizationVoltage	KEYWORD2
+setBatteryEqualizationOverTime	KEYWORD2
+setBatteryEqualizationActive	KEYWORD2
+setMaxChargingTimeAtCv	KEYWORD2
+setBmsMessage	KEYWORD2
+
+parse	KEYWORD2
+build	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+AXPERT_DEFAULT_TIMEOUT_MS	LITERAL1
+AXPERT_MAX_FRAME_LEN	LITERAL1

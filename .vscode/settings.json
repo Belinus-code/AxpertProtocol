@@ -1,0 +1,6 @@
+{
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.arguments": [
+        "--query-driver=**/esp-x32/**,**/xtensa-esp32-elf-*"
+    ]
+}

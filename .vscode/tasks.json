@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Regenerate IntelliSense (compile_commands.json)",
+            "type": "shell",
+            "command": "arduino-cli",
+            "args": [
+                "compile",
+                "--fqbn", "esp32:esp32:esp32",
+                "--only-compilation-database",
+                "--library", "${workspaceFolder}",
+                "--build-path", "${workspaceFolder}/.vscode/build",
+                "${workspaceFolder}/examples/BasicQPIGS"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent"
+            }
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+# Generated IntelliSense compilation database - contains machine-specific
+# absolute paths (your local Arduino15 install location, board FQBN, ...).
+# Regenerate via the "Regenerate IntelliSense (compile_commands.json)" task
+# in .vscode/tasks.json; the rest of .vscode/ (settings, task/config files)
+# is portable and stays tracked.
+.vscode/build/
+
+# Arduino / PlatformIO build output, if you ever build somewhere other than
+# arduino-cli's own temp/cache directories.
+build/
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Editor/OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~

@@ -1,0 +1,11 @@
+CompileFlags:
+  CompilationDatabase: .vscode/build
+  # The ESP32 core's compiler flags include a few Xtensa-GCC-specific
+  # options that clang's driver doesn't recognize. They're harmless to
+  # strip for IntelliSense purposes (the real build still uses xtensa-gcc
+  # via arduino-cli, unaffected by this file).
+  Remove:
+    - -mlongcalls
+    - -freorder-blocks
+    - -fstrict-volatile-bitfields
+    - -fno-tree-switch-conversion
