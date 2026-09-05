@@ -41,7 +41,7 @@ void loop() {
 }
 ```
 
-See `examples/` for more: `MultipleInverters` (two trackers at once), `CustomSerialPort` (arbitrary pins on AVR via SoftwareSerial), `ESP32PinRemap` (arbitrary pins on ESP32 via hardware UART remapping).
+See `examples/` for more: `MultipleInverters` (two trackers at once), `CustomSerialPort` (arbitrary pins on AVR via SoftwareSerial), `ESP32PinRemap` (arbitrary pins on ESP32 via hardware UART remapping), `RawConsole` (type any bare command into the Serial Monitor, forwarded via `sendRawCommand()` - handy for probing a command this library doesn't have a typed method for yet).
 
 ### Choosing a constructor
 
@@ -91,6 +91,28 @@ bool checking = inverter.verifyCrcOnReceive();
 ```
 
 This only affects how incoming responses are checked - every request this library sends is always framed with a correct CRC regardless of this setting. It exists for debugging against a device (or a captured log) with nonconformant CRC framing; leave it enabled for normal use, since it's your only defense against acting on a corrupted reply.
+
+## Sending raw commands
+
+For anything this library doesn't have a typed method for yet - or to probe/replay a command verbatim - `sendRawCommand()` is the escape hatch every `query*()`/`set*()` method is itself built on:
+
+```cpp
+char response[64];
+if (inverter.sendRawCommand("QPIGS", response, sizeof(response))) {
+    Serial.println(response); // e.g. "(228.7 50.0 230.0 ..."
+}
+```
+
+`command` is a bare command string - no CRC, no trailing `<cr>`, just like `"QPIGS"` above. On success, `response` holds the reply as a null-terminated string (leading `(` included, any trailing CRC bytes stripped), so `responseBufCapacity` needs room for that terminator.
+
+`appendCRC` (the 4th parameter, default `true`) controls only the *outgoing* side:
+
+```cpp
+inverter.sendRawCommand("QPIGS", response, sizeof(response));        // CRC + <cr> appended, reply's CRC checked as usual
+inverter.sendRawCommand("QT", response, sizeof(response), false);    // bare <cr> only, no CRC on either side
+```
+
+Pass `false` for a command you know is genuinely CRC-less, the way `QT` (2.19) is - the same shape `queryTime()` uses internally. `timeoutMs` works exactly like every other method's (last parameter, `-1` = this device's default).
 
 ## Architecture
 

@@ -93,6 +93,34 @@ bool AxpertDevice::verifyCrcOnReceive() const {
     return _verifyCrcOnReceive;
 }
 
+bool AxpertDevice::sendRawCommand(const char* command, char* responseBuf, size_t responseBufCapacity,
+                                   bool appendCRC, int32_t timeoutMs) {
+    size_t commandLen = strlen(command);
+    if (commandLen == 0 || responseBufCapacity == 0) return false;
+
+    uint8_t respBuf[AXPERT_MAX_FRAME_LEN];
+    size_t respLen = 0;
+
+    if (appendCRC) {
+        if (!transactRaw(command, commandLen, respBuf, sizeof(respBuf), respLen, timeoutMs)) return false;
+    } else {
+        // No CRC at all, on either side of the wire - same shape as QT
+        // (protocol 2.19), the one command that's genuinely CRC-less.
+        uint8_t frame[AXPERT_MAX_FRAME_LEN];
+        if (commandLen + 1 > sizeof(frame)) return false;
+        memcpy(frame, command, commandLen);
+        frame[commandLen] = 0x0D;
+
+        respLen = _transport.transact(frame, commandLen + 1, respBuf, sizeof(respBuf), resolveTimeout(timeoutMs));
+        if (respLen == 0) return false;
+    }
+
+    if (respLen + 1 > responseBufCapacity) return false; // +1 for the null terminator
+    memcpy(responseBuf, respBuf, respLen);
+    responseBuf[respLen] = '\0';
+    return true;
+}
+
 uint16_t AxpertDevice::resolveTimeout(int32_t timeoutMsOverride) const {
     return (timeoutMsOverride < 0) ? _defaultTimeoutMs : static_cast<uint16_t>(timeoutMsOverride);
 }

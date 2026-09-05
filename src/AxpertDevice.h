@@ -138,6 +138,25 @@ public:
     void setVerifyCrcOnReceive(bool verify);
     bool verifyCrcOnReceive() const;
 
+    // --- Raw / escape hatch ---
+    // Sends `command` (a bare command string, e.g. "QPIGS" - no CRC, no
+    // trailing <cr>) for anything this library doesn't have a typed
+    // method for yet, or to replay/probe a command verbatim. On success,
+    // `responseBuf` holds the reply content as a null-terminated string
+    // (leading '(' included, any trailing CRC bytes stripped - the same
+    // convention every Response::parse() expects) and the call returns
+    // true; `responseBufCapacity` must include room for that terminator.
+    //
+    // `appendCRC` (default true) controls only the *outgoing* side:
+    // true frames `command` exactly like every other method here (CRC +
+    // <cr> appended, reply's CRC checked per setVerifyCrcOnReceive()).
+    // false sends `command` followed by just a bare <cr>, with no CRC on
+    // either side of the wire - the shape used by QT (2.19), the
+    // protocol's one genuinely CRC-less command; use this for a command
+    // you know doesn't carry CRC framing.
+    bool sendRawCommand(const char* command, char* responseBuf, size_t responseBufCapacity,
+                         bool appendCRC = true, int32_t timeoutMs = -1);
+
     // --- Inquiry commands (protocol section 2) ---
     // `timeoutMs < 0` (the default) means "use this device's default
     // timeout"; pass a non-negative value to override it for this call only.

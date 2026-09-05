@@ -87,6 +87,7 @@ setDefaultTimeout	KEYWORD2
 defaultTimeout	KEYWORD2
 setVerifyCrcOnReceive	KEYWORD2
 verifyCrcOnReceive	KEYWORD2
+sendRawCommand	KEYWORD2
 
 queryProtocolId	KEYWORD2
 querySerialNumber	KEYWORD2
