@@ -114,6 +114,19 @@ inverter.sendRawCommand("QT", response, sizeof(response), false);    // bare <cr
 
 Pass `false` for a command you know is genuinely CRC-less, the way `QT` (2.19) is - the same shape `queryTime()` uses internally. `timeoutMs` works exactly like every other method's (last parameter, `-1` = this device's default).
 
+## Checking whether a command is supported
+
+Not every Axpert-protocol device implements every inquiry command. Every `query*()` method has a matching `isXxxSupported()` (e.g. `queryGeneralStatus()` -> `isGeneralStatusSupported()`) that sends the same query up to 3 times and returns `true` on the first successful reply, `false` if all 3 time out or come back malformed - a single dropped byte on the wire shouldn't read as "not supported":
+
+```cpp
+if (inverter.isBatteryEqualizationStatusSupported()) {
+    BatteryEqualizationStatusResponse status;
+    inverter.queryBatteryEqualizationStatus(status);
+}
+```
+
+Methods that take extra parameters keep them on the `isXxxSupported()` side too, e.g. `isParallelInfoSupported(unitIndex)` or `isPvGeneratedEnergyOfMonthSupported(year, month)`; `timeoutMs` is still the last parameter (`-1` = this device's default, applied to each of the up-to-3 attempts individually). There's no `isXxxSupported()` for `set*()` methods - the protocol has no read-only way to probe a setting command without actually changing something.
+
 ## Architecture
 
 ```

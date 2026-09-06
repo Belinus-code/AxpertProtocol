@@ -181,6 +181,15 @@ bool AxpertDevice::transact(const char* payload, ResponseT& out, int32_t timeout
     return transact(payload, strlen(payload), out, timeoutMs);
 }
 
+template <typename ResponseT>
+bool AxpertDevice::probeSupported(bool (AxpertDevice::*queryFn)(ResponseT&, int32_t), int32_t timeoutMs) {
+    ResponseT resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if ((this->*queryFn)(resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
 template <typename RequestT>
 bool AxpertDevice::transactSet(const RequestT& request, int32_t timeoutMs) {
     char payload[AXPERT_MAX_FRAME_LEN];
@@ -362,6 +371,147 @@ bool AxpertDevice::queryOutputLoadEnergyOfDay(uint16_t year, uint8_t month, uint
     if (!AxpertBuilding::appendUInt(cmd, sizeof(cmd), &offset, month, 2)) return false;
     if (!AxpertBuilding::appendUInt(cmd, sizeof(cmd), &offset, day, 2)) return false;
     return transact(cmd, offset, out, timeoutMs);
+}
+
+// ---------------------------------------------------------------------------
+// Support probing - see the comment above these declarations in
+// AxpertDevice.h for what "supported" means here (best of 3 attempts).
+// ---------------------------------------------------------------------------
+
+bool AxpertDevice::isProtocolIdSupported(int32_t timeoutMs) {
+    return probeSupported<ProtocolIdResponse>(&AxpertDevice::queryProtocolId, timeoutMs);
+}
+
+bool AxpertDevice::isSerialNumberSupported(int32_t timeoutMs) {
+    return probeSupported<SerialNumberResponse>(&AxpertDevice::querySerialNumber, timeoutMs);
+}
+
+bool AxpertDevice::isSerialNumberExtendedSupported(int32_t timeoutMs) {
+    return probeSupported<SerialNumberResponse>(&AxpertDevice::querySerialNumberExtended, timeoutMs);
+}
+
+bool AxpertDevice::isMainFirmwareVersionSupported(int32_t timeoutMs) {
+    return probeSupported<FirmwareVersionResponse>(&AxpertDevice::queryMainFirmwareVersion, timeoutMs);
+}
+
+bool AxpertDevice::isSccFirmwareVersionSupported(int32_t timeoutMs) {
+    return probeSupported<FirmwareVersionResponse>(&AxpertDevice::querySccFirmwareVersion, timeoutMs);
+}
+
+bool AxpertDevice::isRemotePanelFirmwareVersionSupported(int32_t timeoutMs) {
+    return probeSupported<FirmwareVersionResponse>(&AxpertDevice::queryRemotePanelFirmwareVersion, timeoutMs);
+}
+
+bool AxpertDevice::isRatingInfoSupported(int32_t timeoutMs) {
+    return probeSupported<RatingInfoResponse>(&AxpertDevice::queryRatingInfo, timeoutMs);
+}
+
+bool AxpertDevice::isFlagStatusSupported(int32_t timeoutMs) {
+    return probeSupported<FlagStatusResponse>(&AxpertDevice::queryFlagStatus, timeoutMs);
+}
+
+bool AxpertDevice::isGeneralStatusSupported(int32_t timeoutMs) {
+    return probeSupported<GeneralStatusResponse>(&AxpertDevice::queryGeneralStatus, timeoutMs);
+}
+
+bool AxpertDevice::isDeviceModeSupported(int32_t timeoutMs) {
+    return probeSupported<DeviceModeResponse>(&AxpertDevice::queryDeviceMode, timeoutMs);
+}
+
+bool AxpertDevice::isWarningStatusSupported(int32_t timeoutMs) {
+    return probeSupported<WarningStatusResponse>(&AxpertDevice::queryWarningStatus, timeoutMs);
+}
+
+bool AxpertDevice::isDefaultSettingsSupported(int32_t timeoutMs) {
+    return probeSupported<DefaultSettingsResponse>(&AxpertDevice::queryDefaultSettings, timeoutMs);
+}
+
+bool AxpertDevice::isMaxChargingCurrentOptionsSupported(int32_t timeoutMs) {
+    return probeSupported<ChargingCurrentOptionsResponse>(&AxpertDevice::queryMaxChargingCurrentOptions, timeoutMs);
+}
+
+bool AxpertDevice::isMaxUtilityChargingCurrentOptionsSupported(int32_t timeoutMs) {
+    return probeSupported<ChargingCurrentOptionsResponse>(&AxpertDevice::queryMaxUtilityChargingCurrentOptions, timeoutMs);
+}
+
+bool AxpertDevice::isTimeSupported(int32_t timeoutMs) {
+    return probeSupported<TimeResponse>(&AxpertDevice::queryTime, timeoutMs);
+}
+
+bool AxpertDevice::isModelNameSupported(int32_t timeoutMs) {
+    return probeSupported<ModelNameResponse>(&AxpertDevice::queryModelName, timeoutMs);
+}
+
+bool AxpertDevice::isGeneralModelNameSupported(int32_t timeoutMs) {
+    return probeSupported<GeneralModelNameResponse>(&AxpertDevice::queryGeneralModelName, timeoutMs);
+}
+
+bool AxpertDevice::isBatteryEqualizationStatusSupported(int32_t timeoutMs) {
+    return probeSupported<BatteryEqualizationStatusResponse>(&AxpertDevice::queryBatteryEqualizationStatus, timeoutMs);
+}
+
+bool AxpertDevice::isParallelInfoSupported(uint8_t unitIndex, int32_t timeoutMs) {
+    ParallelInfoResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryParallelInfo(unitIndex, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isTotalPvGeneratedEnergySupported(int32_t timeoutMs) {
+    return probeSupported<EnergyResponse>(&AxpertDevice::queryTotalPvGeneratedEnergy, timeoutMs);
+}
+
+bool AxpertDevice::isPvGeneratedEnergyOfYearSupported(uint16_t year, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryPvGeneratedEnergyOfYear(year, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isPvGeneratedEnergyOfMonthSupported(uint16_t year, uint8_t month, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryPvGeneratedEnergyOfMonth(year, month, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isPvGeneratedEnergyOfDaySupported(uint16_t year, uint8_t month, uint8_t day, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryPvGeneratedEnergyOfDay(year, month, day, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isTotalOutputLoadEnergySupported(int32_t timeoutMs) {
+    return probeSupported<EnergyResponse>(&AxpertDevice::queryTotalOutputLoadEnergy, timeoutMs);
+}
+
+bool AxpertDevice::isOutputLoadEnergyOfYearSupported(uint16_t year, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryOutputLoadEnergyOfYear(year, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isOutputLoadEnergyOfMonthSupported(uint16_t year, uint8_t month, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryOutputLoadEnergyOfMonth(year, month, resp, timeoutMs)) return true;
+    }
+    return false;
+}
+
+bool AxpertDevice::isOutputLoadEnergyOfDaySupported(uint16_t year, uint8_t month, uint8_t day, int32_t timeoutMs) {
+    EnergyResponse resp;
+    for (uint8_t attempt = 0; attempt < 3; ++attempt) {
+        if (queryOutputLoadEnergyOfDay(year, month, day, resp, timeoutMs)) return true;
+    }
+    return false;
 }
 
 // ---------------------------------------------------------------------------

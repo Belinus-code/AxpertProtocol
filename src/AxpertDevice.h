@@ -206,6 +206,44 @@ public:
     // VERFW (2.7), QOPPT/QCHPT/QOPCHT (2.16-2.18), Q2PGSn (2.24), QBATCD
     // (2.33), QLED (2.36).
 
+    // --- Support probing ---
+    // One isXxxSupported() per inquiry command above, for figuring out at
+    // runtime whether a given device actually implements it (not every
+    // Axpert-protocol device supports every command). Each one calls the
+    // matching query*() up to 3 times and returns true on the first
+    // success, false if all 3 attempts fail - a single failed attempt could
+    // just be a dropped byte on the wire, not genuine non-support, so one
+    // NAK/timeout alone isn't treated as a verdict. The out parameter isn't
+    // needed here since only whether it succeeded matters, not what came
+    // back with it.
+    bool isProtocolIdSupported(int32_t timeoutMs = -1);
+    bool isSerialNumberSupported(int32_t timeoutMs = -1);
+    bool isSerialNumberExtendedSupported(int32_t timeoutMs = -1);
+    bool isMainFirmwareVersionSupported(int32_t timeoutMs = -1);
+    bool isSccFirmwareVersionSupported(int32_t timeoutMs = -1);
+    bool isRemotePanelFirmwareVersionSupported(int32_t timeoutMs = -1);
+    bool isRatingInfoSupported(int32_t timeoutMs = -1);
+    bool isFlagStatusSupported(int32_t timeoutMs = -1);
+    bool isGeneralStatusSupported(int32_t timeoutMs = -1);
+    bool isDeviceModeSupported(int32_t timeoutMs = -1);
+    bool isWarningStatusSupported(int32_t timeoutMs = -1);
+    bool isDefaultSettingsSupported(int32_t timeoutMs = -1);
+    bool isMaxChargingCurrentOptionsSupported(int32_t timeoutMs = -1);
+    bool isMaxUtilityChargingCurrentOptionsSupported(int32_t timeoutMs = -1);
+    bool isTimeSupported(int32_t timeoutMs = -1);
+    bool isModelNameSupported(int32_t timeoutMs = -1);
+    bool isGeneralModelNameSupported(int32_t timeoutMs = -1);
+    bool isBatteryEqualizationStatusSupported(int32_t timeoutMs = -1);
+    bool isParallelInfoSupported(uint8_t unitIndex, int32_t timeoutMs = -1);
+    bool isTotalPvGeneratedEnergySupported(int32_t timeoutMs = -1);
+    bool isPvGeneratedEnergyOfYearSupported(uint16_t year, int32_t timeoutMs = -1);
+    bool isPvGeneratedEnergyOfMonthSupported(uint16_t year, uint8_t month, int32_t timeoutMs = -1);
+    bool isPvGeneratedEnergyOfDaySupported(uint16_t year, uint8_t month, uint8_t day, int32_t timeoutMs = -1);
+    bool isTotalOutputLoadEnergySupported(int32_t timeoutMs = -1);
+    bool isOutputLoadEnergyOfYearSupported(uint16_t year, int32_t timeoutMs = -1);
+    bool isOutputLoadEnergyOfMonthSupported(uint16_t year, uint8_t month, int32_t timeoutMs = -1);
+    bool isOutputLoadEnergyOfDaySupported(uint16_t year, uint8_t month, uint8_t day, int32_t timeoutMs = -1);
+
     // --- Setting commands (protocol section 3) ---
     // Every setter below takes the matching Request struct from
     // src/requests/ and returns whether the device ACKed it (via the
@@ -316,6 +354,15 @@ private:
 
     template <typename ResponseT>
     bool transact(const char* payload, ResponseT& out, int32_t timeoutMs);
+
+    // Shared by every isXxxSupported() that takes no parameters besides the
+    // response and timeout: calls `queryFn` (one of the query*() methods
+    // above) up to 3 times, returning true on the first success. The few
+    // query*() methods with extra parameters (queryParallelInfo, the
+    // year/month/day-scoped energy queries) don't fit this shape and just
+    // repeat the same 3-attempt loop by hand in their isXxxSupported().
+    template <typename ResponseT>
+    bool probeSupported(bool (AxpertDevice::*queryFn)(ResponseT&, int32_t), int32_t timeoutMs);
 
     template <typename RequestT>
     bool transactSet(const RequestT& request, int32_t timeoutMs);
