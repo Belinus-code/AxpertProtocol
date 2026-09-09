@@ -8,7 +8,7 @@ An object-oriented Arduino library for the Voltronic/Axpert **MKS II / MKS III /
 - A global default timeout per device, with a **per-call override** for the handful of commands that need more time.
 - CRC verification on received replies can be turned off per device for debugging, without weakening what gets *sent*.
 
-> **Status:** every command still present in the source protocol document has a request/response struct and a wired-up `AxpertDevice` method, and the whole thing compiles clean (`--warnings all`) against both AVR and ESP32. It has **not yet been run against a real inverter** - treat it as implemented-per-the-document, not field-verified. See [Known issues](#known-issues) below for the handful of spots where the document itself is ambiguous or was found to be inconsistent (tracked-changes marks that didn't get cleaned up).
+> **Status:** every command still present in the source protocol document has a request/response struct and a wired-up `AxpertDevice` method, and the whole thing compiles clean (`--warnings all`) against both AVR and ESP32. **Confirmed working against a real inverter** - not every single command has been exercised there, and a command that comes back unsupported on a given device is a limitation of that inverter/firmware, not of this library (see [Checking whether a command is supported](#checking-whether-a-command-is-supported)). See [Known issues](#known-issues) below for the handful of spots where the document itself is ambiguous or was found to be inconsistent (tracked-changes marks that didn't get cleaned up).
 
 ## Installation
 
