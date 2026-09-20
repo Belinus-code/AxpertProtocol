@@ -6,10 +6,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// QPIWS (2.12): "(a0a1...a34a35" - 36 warning/fault bits, one per byte
-// here. See AxpertWarningBit in AxpertTypes.h for what each bit means and
-// which ones are deprecated/reserved in this protocol revision - the field
-// names below follow that enum's naming.
+// QPIWS (2.12): "(a0a1...a34a35" - up to 36 warning/fault bits, one per
+// byte here. See AxpertWarningBit in AxpertTypes.h for what each bit means
+// and which ones are deprecated/reserved in this protocol revision - the
+// field names below follow that enum's naming. Older/other firmware
+// revisions send fewer bits (missing trailing ones, e.g. the MKS III
+// fault-code/reserved bits added later) - parse() accepts 32-36 bits and
+// zero-fills whatever wasn't sent.
 struct WarningStatusResponse {
     uint8_t pvLoss;                 // a0
     uint8_t inverterFault;          // a1
